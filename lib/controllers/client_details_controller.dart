@@ -3,7 +3,6 @@ import '../models/Client.dart';
 import '../models/Dette.dart';
 
 class ClientDetailController extends GetxController {
-  // Client spécifique (observable)
   var client = Rx<Client>(Client(
     surname: '',
     phone: '',
@@ -23,5 +22,15 @@ class ClientDetailController extends GetxController {
     client.update((val) {
       debt.isPaid = true;
     });
+  }
+
+  // Méthode pour obtenir les dettes non payées
+  List<Dette> get unpaidDebts {
+    return client.value.debts.where((debt) => !debt.isPaid).toList();
+  }
+
+  // Méthode pour obtenir les dettes payées
+  List<Dette> get paidDebts {
+    return client.value.debts.where((debt) => debt.isPaid).toList();
   }
 }
