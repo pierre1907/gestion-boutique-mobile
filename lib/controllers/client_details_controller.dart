@@ -20,7 +20,7 @@ class ClientDetailController extends GetxController {
   // Méthode pour marquer une dette comme payée
   void markDebtAsPaid(Dette debt) {
     client.update((val) {
-      debt.isPaid = true;
+      val?.debts.firstWhere((d) => d == debt).isPaid = true;
     });
   }
 
