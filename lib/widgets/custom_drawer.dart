@@ -41,7 +41,7 @@ class CustomDrawer extends StatelessWidget {
             leading: Icon(Icons.person),
             title: Text('Client'),
             onTap: () {
-              Get.to(() => ClientPage());
+              Get.to(() => ClientHomePage());
             },
           ),
         ],

@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
             btnCustom(
               text: 'Accès Client',
               onPressed: () {
-                Get.to(() => ClientPage());
+                Get.to(() => ClientHomePage());
               },
             ),
           ],
