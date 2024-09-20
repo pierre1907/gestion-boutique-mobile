@@ -14,7 +14,6 @@ class ClientHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Exemple de client pour la démonstration
     final client = Client(
-      id: 1,
       surname: 'John Doe',
       phone: '1234567890',
       address: '123 Main St',

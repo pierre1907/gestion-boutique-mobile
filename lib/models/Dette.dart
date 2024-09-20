@@ -14,7 +14,7 @@ class Dette {
     return Dette(
       date: json['date'], // Assure-toi que cette clé existe dans le JSON
       amount: json['amount'],
-      isPaid: json['isPaid'] ?? false, // Valeur par défaut si null
+      isPaid: json['isPaid'] ?? false,
     );
   }
 

@@ -32,6 +32,8 @@ dependencies:
     sdk: flutter
   get :
   http: ^0.13.4
+  image_picker: ^1.1.2
+
 
 
 

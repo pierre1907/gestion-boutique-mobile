@@ -52,6 +52,69 @@ class ClientDetailsPage extends StatelessWidget {
     );
   }
 
+  Widget _buildClientInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Nom: ${client.surname}', style: TextStyle(fontSize: 20)),
+        SizedBox(height: 10),
+        Text('Téléphone: ${client.phone}', style: TextStyle(fontSize: 16)),
+        SizedBox(height: 10),
+        Text('Adresse: ${client.address}', style: TextStyle(fontSize: 16)),
+        SizedBox(height: 10),
+        // Affiche l'email, le login et la photo s'ils existent
+        if (client.compteUtilisateur != null) ...[
+          if (client.compteUtilisateur!.email != null &&
+              client.compteUtilisateur!.email!.isNotEmpty) ...[
+            Text('Email: ${client.compteUtilisateur!.email}',
+                style: TextStyle(fontSize: 16)),
+            SizedBox(height: 10),
+          ],
+          if (client.compteUtilisateur!.login != null &&
+              client.compteUtilisateur!.login!.isNotEmpty) ...[
+            Text('Login: ${client.compteUtilisateur!.login}',
+                style: TextStyle(fontSize: 16)),
+            SizedBox(height: 10),
+          ],
+          // if (client.compteUtilisateur?.photo != null &&
+          //     client.compteUtilisateur!.photo!.isNotEmpty) ...[
+          //   Text('Photo: ${client.compteUtilisateur?.photo}',
+          //       style: TextStyle(fontSize: 16)),
+          //   SizedBox(height: 10),
+          // ],
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDebtList(List<Dette> debts, {bool unpaid = true}) {
+    return Expanded(
+      child: Obx(() {
+        final debtList = unpaid
+            ? clientDetailController.unpaidDebts
+            : clientDetailController.paidDebts;
+        return ListView.builder(
+          itemCount: debtList.length,
+          itemBuilder: (context, index) {
+            final debt = debtList[index];
+            return ListTile(
+              title: Text('Montant: ${debt.amount.toStringAsFixed(0)} FCFA'),
+              subtitle: Text('Date: ${debt.date}'),
+              trailing: unpaid
+                  ? IconButton(
+                      icon: Icon(Icons.check),
+                      onPressed: () {
+                        _showConfirmationDialog(debt);
+                      },
+                    )
+                  : null,
+            );
+          },
+        );
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,69 +126,13 @@ class ClientDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Nom: ${client.surname}', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 10),
-            Text('Téléphone: ${client.phone}', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 10),
-            Text('Adresse: ${client.address}', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 10),
-            // Affiche l'email uniquement s'il n'est pas vide
-            if (client.email != null && client.email!.isNotEmpty) ...[
-              Text('Email: ${client.email}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 10),
-            ],
-            // Affiche le login uniquement s'il n'est pas vide
-            if (client.login != null && client.login!.isNotEmpty) ...[
-              Text('Login: ${client.login}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 10),
-            ],
-            // Affiche la photo uniquement s'il n'est pas vide
-            if (client.photo != null && client.photo!.isNotEmpty) ...[
-              Text('Photo: ${client.photo}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 10),
-            ],
+            _buildClientInfo(),
             SizedBox(height: 20),
             Text('Dettes non soldées', style: TextStyle(fontSize: 20)),
-            Expanded(
-              child: Obx(() {
-                final unpaidDebts = clientDetailController.unpaidDebts;
-                return ListView.builder(
-                  itemCount: unpaidDebts.length,
-                  itemBuilder: (context, index) {
-                    final unpaidDebt = unpaidDebts[index];
-                    return ListTile(
-                      title: Text(
-                          'Montant: ${unpaidDebt.amount.toStringAsFixed(0)} FCFA'),
-                      subtitle: Text('Date: ${unpaidDebt.date}'),
-                      trailing: IconButton(
-                        icon: Icon(Icons.check),
-                        onPressed: () {
-                          _showConfirmationDialog(unpaidDebt);
-                        },
-                      ),
-                    );
-                  },
-                );
-              }),
-            ),
+            _buildDebtList(clientDetailController.unpaidDebts, unpaid: true),
             SizedBox(height: 20),
             Text('Dettes soldées', style: TextStyle(fontSize: 20)),
-            Expanded(
-              child: Obx(() {
-                final paidDebts = clientDetailController.paidDebts;
-                return ListView.builder(
-                  itemCount: paidDebts.length,
-                  itemBuilder: (context, index) {
-                    final paidDebt = paidDebts[index];
-                    return ListTile(
-                      title: Text(
-                          'Montant: ${paidDebt.amount.toStringAsFixed(0)} FCFA'),
-                      subtitle: Text('Date: ${paidDebt.date}'),
-                    );
-                  },
-                );
-              }),
-            ),
+            _buildDebtList(clientDetailController.paidDebts, unpaid: false),
             SizedBox(height: 20),
             Text('Ajouter une dette', style: TextStyle(fontSize: 20)),
             Form(
@@ -139,6 +146,10 @@ class ClientDetailsPage extends StatelessWidget {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Veuillez entrer un montant';
+                      }
+                      final amount = double.tryParse(value);
+                      if (amount == null || amount <= 0) {
+                        return 'Veuillez entrer un montant valide';
                       }
                       return null;
                     },

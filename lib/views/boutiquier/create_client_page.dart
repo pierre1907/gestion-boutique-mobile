@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gestion_boutique_mobile/controllers/client_controllers.dart';
 import 'package:gestion_boutique_mobile/models/Client.dart';
+import 'package:gestion_boutique_mobile/models/compteUtilisateur.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateClientPage extends StatefulWidget {
   @override
@@ -19,6 +23,18 @@ class _CreateClientPageState extends State<CreateClientPage> {
   final _emailController = TextEditingController();
   final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  String? _photoPath;
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _photoPath = pickedFile.path;
+      });
+    }
+  }
 
   bool hasAccount = false;
 
@@ -95,25 +111,53 @@ class _CreateClientPageState extends State<CreateClientPage> {
                   decoration: InputDecoration(labelText: 'Mot de passe'),
                   obscureText: true,
                 ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _pickImage,
+                  child: Text('Choisir une photo'),
+                ),
               ],
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    // Vérification des champs si le client a un compte
+                    if (hasAccount &&
+                        (_emailController.text.isEmpty ||
+                            _loginController.text.isEmpty ||
+                            _passwordController.text.isEmpty)) {
+                      Get.snackbar('Erreur',
+                          'Veuillez remplir tous les champs du compte utilisateur.');
+                      return; // Arrête l'exécution si les champs sont vides
+                    }
+
+                    // Créer un objet CompteUtilisateur seulement si hasAccount est vrai
+                    CompteUtilisateur? compteUtilisateur;
+
+                    if (hasAccount) {
+                      compteUtilisateur = CompteUtilisateur(
+                        email: _emailController.text,
+                        login: _loginController.text,
+                        password: _passwordController.text,
+                      );
+                    }
+
+                    // Créer l'objet Client
                     final newClient = Client(
-                      id: clientController.clients.length + 1,
                       surname: _surnameController.text,
                       phone: _phoneController.text,
                       address: _addressController.text,
                       hasAccount: hasAccount,
-                      email: hasAccount ? _emailController.text : null,
-                      login: hasAccount ? _loginController.text : null,
-                      password: hasAccount ? _passwordController.text : null,
+                      compteUtilisateur:
+                          compteUtilisateur, // Peut être null si pas de compte
                     );
 
-                    clientController.addClient(newClient);
+                    // Appel à la méthode du contrôleur pour créer le client
+                    print(
+                        'Données envoyées : ${jsonEncode(newClient.toJson())}');
+                    clientController.createClient(newClient);
 
-                    // Réinitialiser le formulaire
+                    // Réinitialiser le formulaire après la création du client
                     _surnameController.clear();
                     _phoneController.clear();
                     _addressController.clear();
@@ -122,9 +166,8 @@ class _CreateClientPageState extends State<CreateClientPage> {
                     _passwordController.clear();
                     setState(() {
                       hasAccount = false;
+                      _photoPath = null;
                     });
-
-                    Get.snackbar('Succès', 'Client créé avec succès');
                   }
                 },
                 child: Text('Ajouter le client'),

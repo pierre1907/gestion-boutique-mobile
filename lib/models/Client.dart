@@ -1,28 +1,29 @@
 import 'package:gestion_boutique_mobile/models/Dette.dart';
+import 'package:gestion_boutique_mobile/models/compteUtilisateur.dart';
 
 class Client {
-  final int id;
+  final int? id;
   String surname;
   String phone;
   String address;
   bool hasAccount;
-  String? email;
-  String? login;
-  String? password;
-  String? photo;
+  // String? email;
+  // String? login;
+  // String? password;
   List<Dette> debts;
+  final CompteUtilisateur? compteUtilisateur;
 
   Client({
-    required this.id,
+    this.id,
     required this.surname,
     required this.phone,
     required this.address,
     this.hasAccount = false,
-    this.email,
-    this.login,
-    this.password,
-    this.photo,
+    // this.email,
+    // this.login,
+    // this.password,
     List<Dette>? debts,
+    this.compteUtilisateur,
   }) : this.debts = debts ?? [];
 
   // Méthode pour créer un Client à partir d'un JSON
@@ -33,14 +34,16 @@ class Client {
       phone: json['phone'],
       address: json['address'],
       hasAccount: json['hasAccount'] ?? false,
-      email: json['email'],
-      login: json['login'],
-      password: json['password'],
-      photo: json['photo'],
+      // email: json['email'],
+      // login: json['login'],
+      // password: json['password'],
       debts: (json['debts'] as List<dynamic>?)
               ?.map((debt) => Dette.fromJson(debt))
               .toList() ??
           [],
+      compteUtilisateur: json['compteUtilisateur'] != null
+          ? CompteUtilisateur.fromJson(json['compteUtilisateur'])
+          : null,
     );
   }
 
@@ -52,11 +55,8 @@ class Client {
       'phone': phone,
       'address': address,
       'hasAccount': hasAccount,
-      'email': email,
-      'login': login,
-      'password': password,
-      'photo': photo,
       'debts': debts.map((debt) => debt.toJson()).toList(),
+      'compteUtilisateur': compteUtilisateur?.toJson(),
     };
   }
 }
