@@ -101,6 +101,7 @@ class _CreateClientPageState extends State<CreateClientPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final newClient = Client(
+                      id: clientController.clients.length + 1,
                       surname: _surnameController.text,
                       phone: _phoneController.text,
                       address: _addressController.text,

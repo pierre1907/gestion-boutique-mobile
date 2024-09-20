@@ -4,8 +4,12 @@ import 'package:gestion_boutique_mobile/views/client/client_details_page.dart';
 import 'package:get/get.dart';
 
 class ListClientsPage extends StatelessWidget {
-  final ClientController clientController =
-      Get.find(); // Utilisation de Get.find()
+  final ClientController clientController = Get.put(ClientController());
+
+  ListClientsPage() {
+    // Appel pour récupérer les clients lors de l'initialisation
+    clientController.fetchClients();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,11 @@ class ListClientsPage extends StatelessWidget {
             Text('Clients', style: TextStyle(fontSize: 24)),
             Expanded(
               child: Obx(() {
+                // Indication de chargement si la liste est vide
+                if (clientController.clients.isEmpty) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
                 return ListView.builder(
                   itemCount: clientController.clients.length,
                   itemBuilder: (context, index) {

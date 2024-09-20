@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 import '../models/Client.dart';
 import '../models/Dette.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ClientDetailController extends GetxController {
   var client = Rx<Client>(Client(
+    id: 0,
     surname: '',
     phone: '',
     address: '',
@@ -32,5 +35,16 @@ class ClientDetailController extends GetxController {
   // Méthode pour obtenir les dettes payées
   List<Dette> get paidDebts {
     return client.value.debts.where((debt) => debt.isPaid).toList();
+  }
+
+  // Méthode pour récupérer les détails du client par ID
+  Future<void> fetchClientDetails(int id) async {
+    final response =
+        await http.get(Uri.parse('http://localhost:8080/clients/$id/details'));
+    if (response.statusCode == 200) {
+      client.value = Client.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load client details');
+    }
   }
 }

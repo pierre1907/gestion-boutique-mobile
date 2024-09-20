@@ -68,6 +68,22 @@ class ClientDetailsPage extends StatelessWidget {
             Text('Téléphone: ${client.phone}', style: TextStyle(fontSize: 16)),
             SizedBox(height: 10),
             Text('Adresse: ${client.address}', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 10),
+            // Affiche l'email uniquement s'il n'est pas vide
+            if (client.email != null && client.email!.isNotEmpty) ...[
+              Text('Email: ${client.email}', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 10),
+            ],
+            // Affiche le login uniquement s'il n'est pas vide
+            if (client.login != null && client.login!.isNotEmpty) ...[
+              Text('Login: ${client.login}', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 10),
+            ],
+            // Affiche la photo uniquement s'il n'est pas vide
+            if (client.photo != null && client.photo!.isNotEmpty) ...[
+              Text('Photo: ${client.photo}', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 10),
+            ],
             SizedBox(height: 20),
             Text('Dettes non soldées', style: TextStyle(fontSize: 20)),
             Expanded(
@@ -136,7 +152,7 @@ class ClientDetailsPage extends StatelessWidget {
                         onPressed: () => _selectDate(context),
                       ),
                     ),
-                    readOnly: true, // Rendre le champ en lecture seule
+                    readOnly: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Veuillez entrer une date';
@@ -153,12 +169,8 @@ class ClientDetailsPage extends StatelessWidget {
                           amount: double.parse(_amountController.text),
                         );
                         clientDetailController.addDebt(newDebt);
-
-                        // Réinitialiser le formulaire
                         _amountController.clear();
                         _dateController.clear();
-
-                        // Afficher un message de succès
                         Get.snackbar('Succès', 'Dette ajoutée avec succès');
                       }
                     },
