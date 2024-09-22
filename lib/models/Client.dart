@@ -31,7 +31,7 @@ class Client {
       address: json['address'],
       totalDue: json['totalDue'],
       asAccount: json['asAccount'] ?? false,
-      debts: json['debts'],
+      debts: json['debts'] != null ? json['debts'] : [], // Gérer le null ici
     );
   }
 
