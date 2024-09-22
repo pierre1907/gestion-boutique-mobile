@@ -1,11 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gestion_boutique_mobile/controllers/client_controllers.dart';
 import 'package:gestion_boutique_mobile/models/Client.dart';
-import 'package:gestion_boutique_mobile/models/compteUtilisateur.dart';
+import 'package:gestion_boutique_mobile/models/CompteUtilisateur.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:gestion_boutique_mobile/models/Role.dart';
 
 class CreateClientPage extends StatefulWidget {
   @override
@@ -26,6 +26,8 @@ class _CreateClientPageState extends State<CreateClientPage> {
   final ImagePicker _picker = ImagePicker();
   String? _photoPath;
 
+  bool hasAccount = false;
+
   Future<void> _pickImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
@@ -35,8 +37,6 @@ class _CreateClientPageState extends State<CreateClientPage> {
       });
     }
   }
-
-  bool hasAccount = false;
 
   @override
   Widget build(BuildContext context) {
@@ -101,15 +101,33 @@ class _CreateClientPageState extends State<CreateClientPage> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(labelText: 'Email'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un email';
+                    }
+                    return null;
+                  },
                 ),
                 TextFormField(
                   controller: _loginController,
                   decoration: InputDecoration(labelText: 'Login'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un login';
+                    }
+                    return null;
+                  },
                 ),
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(labelText: 'Mot de passe'),
                   obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un mot de passe';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
@@ -139,6 +157,7 @@ class _CreateClientPageState extends State<CreateClientPage> {
                         email: _emailController.text,
                         login: _loginController.text,
                         password: _passwordController.text,
+                        photo: _photoPath,
                       );
                     }
 
@@ -147,9 +166,10 @@ class _CreateClientPageState extends State<CreateClientPage> {
                       surname: _surnameController.text,
                       phone: _phoneController.text,
                       address: _addressController.text,
-                      hasAccount: hasAccount,
-                      compteUtilisateur:
-                          compteUtilisateur, // Peut être null si pas de compte
+                      asAccount: hasAccount,
+                      compteUtilisateur: compteUtilisateur,
+                      totalDue: 0.0,
+                      debts: [],
                     );
 
                     // Appel à la méthode du contrôleur pour créer le client

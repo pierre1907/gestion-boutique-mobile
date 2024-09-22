@@ -98,7 +98,7 @@ class ClientDetailsPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final debt = debtList[index];
             return ListTile(
-              title: Text('Montant: ${debt.amount.toStringAsFixed(0)} FCFA'),
+              title: Text('Montant: ${debt.montant.toStringAsFixed(0)} FCFA'),
               subtitle: Text('Date: ${debt.date}'),
               trailing: unpaid
                   ? IconButton(
@@ -176,8 +176,9 @@ class ClientDetailsPage extends StatelessWidget {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         final newDebt = Dette(
-                          date: _dateController.text,
-                          amount: double.parse(_amountController.text),
+                          date: DateTime.parse(_dateController.text),
+                          montant: double.parse(_amountController.text),
+                          client: client,
                         );
                         clientDetailController.addDebt(newDebt);
                         _amountController.clear();

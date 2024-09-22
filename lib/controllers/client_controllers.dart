@@ -13,8 +13,7 @@ class ClientController extends GetxController {
 
   // Méthode pour récupérer les clients depuis l'API
   Future<void> fetchClients() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8080/clients/liste'));
+    final response = await http.get(Uri.parse('http://localhost:8080/clients'));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -53,7 +52,7 @@ class ClientController extends GetxController {
   // Méthode pour créer un client via l'API
   Future<void> createClient(Client newClient) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8080/clients/add'),
+      Uri.parse('http://localhost:8080/clients'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -65,17 +64,17 @@ class ClientController extends GetxController {
       await fetchClients();
     } else {
       print(
-          'Erreur : ${response.statusCode}, ${response.body}'); // Ajoute ce log
+          'Erreur : ${response.statusCode}, ${response.body}');
       Get.snackbar('Erreur', 'Échec de la création du client');
     }
   }
 
   // Méthode pour filtrer les clients avec ou sans compte
   List<Client> getClientsWithAccount() {
-    return clients.where((client) => client.hasAccount).toList();
+    return clients.where((client) => client.asAccount).toList();
   }
 
   List<Client> getClientsWithoutAccount() {
-    return clients.where((client) => !client.hasAccount).toList();
+    return clients.where((client) => !client.asAccount).toList();
   }
 }

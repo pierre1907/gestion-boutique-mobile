@@ -20,7 +20,7 @@ class PaidDebtsPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final debt = paidDebts[index];
             return ListTile(
-              title: Text('Montant: ${debt.amount.toStringAsFixed(0)} FCFA'),
+              title: Text('Montant: ${debt.montant.toStringAsFixed(0)} FCFA'),
               subtitle: Text('Date: ${debt.date}'),
             );
           },

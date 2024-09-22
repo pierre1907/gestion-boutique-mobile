@@ -1,30 +1,26 @@
+import 'package:gestion_boutique_mobile/models/CompteUtilisateur.dart';
 import 'package:gestion_boutique_mobile/models/Dette.dart';
-import 'package:gestion_boutique_mobile/models/compteUtilisateur.dart';
 
 class Client {
   final int? id;
-  String surname;
-  String phone;
-  String address;
-  bool hasAccount;
-  // String? email;
-  // String? login;
-  // String? password;
-  List<Dette> debts;
-  final CompteUtilisateur? compteUtilisateur;
+  final String surname;
+  final String phone;
+  final String address;
+  final double totalDue;
+  final bool asAccount;
+  late final List<Dette> debts;
+  final CompteUtilisateur? compteUtilisateur; // si tu veux l'inclure
 
   Client({
     this.id,
     required this.surname,
     required this.phone,
     required this.address,
-    this.hasAccount = false,
-    // this.email,
-    // this.login,
-    // this.password,
-    List<Dette>? debts,
+    required this.totalDue,
+    this.asAccount = false,
+    required List debts,
     this.compteUtilisateur,
-  }) : this.debts = debts ?? [];
+  }) : this.debts = debts.map((debt) => Dette.fromJson(debt)).toList();
 
   // Méthode pour créer un Client à partir d'un JSON
   factory Client.fromJson(Map<String, dynamic> json) {
@@ -33,30 +29,21 @@ class Client {
       surname: json['surname'],
       phone: json['phone'],
       address: json['address'],
-      hasAccount: json['hasAccount'] ?? false,
-      // email: json['email'],
-      // login: json['login'],
-      // password: json['password'],
-      debts: (json['debts'] as List<dynamic>?)
-              ?.map((debt) => Dette.fromJson(debt))
-              .toList() ??
-          [],
-      compteUtilisateur: json['compteUtilisateur'] != null
-          ? CompteUtilisateur.fromJson(json['compteUtilisateur'])
-          : null,
+      totalDue: json['totalDue'],
+      asAccount: json['asAccount'] ?? false,
+      debts: json['debts'],
     );
   }
 
   // Méthode pour convertir un Client en JSON
-
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'surname': surname,
       'phone': phone,
       'address': address,
-      'hasAccount': hasAccount,
-      'debts': debts.map((debt) => debt.toJson()).toList(),
-      'compteUtilisateur': compteUtilisateur?.toJson(),
+      'totalDue': totalDue,
+      'asAccount': asAccount,
     };
   }
 }
